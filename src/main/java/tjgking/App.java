@@ -17,6 +17,12 @@ public class App {
 
     public static void main(String[] args) {
         boolean sw = false;
+
+        if (args.length != 3 && args.length != 0) {
+            System.out.println("参数错误");
+            return;
+        }
+
         while (!sw) {
             System.out.println("欢迎使用！");
             System.out.println("本工具用于汇总Excel表格");
@@ -27,15 +33,25 @@ public class App {
                     "4:其他\n" +
                     "q:退出程序\n" +
                     "**********************************");
+            String read = "";
+            String importExcelFilePath = "";
+            String outputExcelFilePath = "";
 
-            Scanner scan = new Scanner(System.in);
-            String read = scan.nextLine();
+            if (args.length == 3) {
+                read = args[0];
+                importExcelFilePath = args[1];
+                outputExcelFilePath = args[2];
+            } else {
+                Scanner scan = new Scanner(System.in);
+                read = scan.nextLine();
+            }
+
             switch (read.toLowerCase()) {
                 case "1":
-                    sw = importOperationHistory("normal");
+                    sw = importOperationHistory("normal", importExcelFilePath, outputExcelFilePath);
                     break;
                 case "3":
-                    sw = importOperationHistory("WSASMRecord");
+                    sw = importOperationHistory("WSASMRecord", importExcelFilePath, outputExcelFilePath);
                     break;
                 case "q":
                     return;
@@ -43,25 +59,47 @@ public class App {
                     System.out.println("请重新输入:");
             }
 
+            read = "";
+
         }
     }
 
 
-    private static boolean importOperationHistory(String importType) {
+    private static boolean importOperationHistory(String importType,String importExcelFilePath,String outputExcelFilePath) {
         Importer importer;
         System.out.println("请选择汇总表：");
         try {
-            ExcelFile file = jFileChooser(FileType_ExcelFile);
-            if (file == null) {
+            ExcelFile file;
+
+            if (importExcelFilePath.equals("")) {
+                file = jFileChooser(FileType_ExcelFile);
+            } else {
+                file = new ExcelFile(importExcelFilePath);
+            }
+
+            if (file == null || !file.exists()) {
                 System.out.println("没有选中文件");
                 return false;
             } else {
                 System.out.println("汇总表为：" + file.getPath());
                 System.out.println("请选择记录表所在文件夹:");
-                ExcelFile file1 = jFileChooser(FileType_Directory);
-                System.out.println("记录表文件夹：" + file.getPath());
 
-                switch (importType){
+                ExcelFile file1;
+                if (outputExcelFilePath.equals("")) {
+                    file1 = jFileChooser(FileType_Directory);
+                } else {
+                    file1 = new ExcelFile(outputExcelFilePath);
+                }
+
+                if (file1.exists()) {
+                    System.out.println("记录表文件夹：" + file.getPath());
+                } else {
+                    System.out.println("记录表文件夹不存在!");
+                    return false;
+                }
+
+
+                switch (importType) {
                     case "normal":
                         importer = new Importer(file);
                         break;
