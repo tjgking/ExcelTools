@@ -24,6 +24,7 @@ public class App {
         }
 
         while (!sw) {
+            System.out.println("\n**********************************");
             System.out.println("欢迎使用！");
             System.out.println("本工具用于汇总Excel表格");
             System.out.println("请选择功能项:\n" +
@@ -32,14 +33,16 @@ public class App {
                     "3:无线维保记录表汇总\n" +
                     "4:其他\n" +
                     "q:退出程序\n" +
-                    "**********************************");
+                    "**********************************\n" +
+                    "请输入功能：\n\n");
             String read = "";
-            String importExcelFilePath = "";
+            String importExcelDirectoryPath = "";
             String outputExcelFilePath = "";
 
-            if (args.length == 3) {
+            if (args != null && args.length == 3) {
+                System.out.println("检测到自动化参数");
                 read = args[0];
-                importExcelFilePath = args[1];
+                importExcelDirectoryPath = args[1];
                 outputExcelFilePath = args[2];
             } else {
                 Scanner scan = new Scanner(System.in);
@@ -48,10 +51,10 @@ public class App {
 
             switch (read.toLowerCase()) {
                 case "1":
-                    sw = importOperationHistory("normal", importExcelFilePath, outputExcelFilePath);
+                    sw = importOperationHistory("normal", importExcelDirectoryPath, outputExcelFilePath);
                     break;
                 case "3":
-                    sw = importOperationHistory("WSASMRecord", importExcelFilePath, outputExcelFilePath);
+                    sw = importOperationHistory("WSASMRecord", importExcelDirectoryPath, outputExcelFilePath);
                     break;
                 case "q":
                     return;
@@ -59,22 +62,21 @@ public class App {
                     System.out.println("请重新输入:");
             }
 
-            read = "";
-
+            args = null;
         }
     }
 
 
-    private static boolean importOperationHistory(String importType,String importExcelFilePath,String outputExcelFilePath) {
+    private static boolean importOperationHistory(String importType,String importExcelDirectoryPath,String outputExcelFilePath) {
         Importer importer;
         System.out.println("请选择汇总表：");
         try {
             ExcelFile file;
 
-            if (importExcelFilePath.equals("")) {
+            if (importExcelDirectoryPath.equals("")) {
                 file = jFileChooser(FileType_ExcelFile);
             } else {
-                file = new ExcelFile(importExcelFilePath);
+                file = new ExcelFile(importExcelDirectoryPath);
             }
 
             if (file == null || !file.exists()) {
@@ -112,6 +114,10 @@ public class App {
                 switch (importer.importExcelTable(file1)) {
                     case Importer.IMOPRT_SUCCESSED:
                         System.out.println("\n导入成功");
+                        break;
+                    case Importer.IMORRT_IOFailure:
+                        System.out.println("导入失败，IO错误，请检查文件目录和权限");
+                        break;
                 }
                 return false;
             }

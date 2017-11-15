@@ -23,9 +23,10 @@ import java.util.Map;
 public class Importer {
     final ExcelFile excelfile;
 
-    public static final int IMOPRT_NotDirecotry = 0;
-    public static final int IMOPRT_SUCCESSED = 1;
-    public static final int IMOPRT_BadTable = 2;
+    int IMOPRT_SUCCESSED = 0;
+    public static final int IMOPRT_NotDirecotry = -1;
+    public static final int IMOPRT_BadTable = -2;
+    public static final int IMORRT_IOFailure = -3;
 
     public Importer(ExcelFile excelfile) {
         this.excelfile = excelfile;
@@ -47,6 +48,7 @@ public class Importer {
                     return IMOPRT_BadTable;
                 }
 
+                IMOPRT_SUCCESSED++;
             }
 
             SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");//设置日期格式
@@ -139,6 +141,7 @@ public class Importer {
                 }
             }
         }
+        workbookIn.close();
 
         return map;
     }
@@ -170,6 +173,7 @@ public class Importer {
 
                 }
             }
+            System.out.println("\n");
             return true;
         }
         return false;

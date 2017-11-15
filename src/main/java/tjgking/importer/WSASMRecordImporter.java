@@ -49,12 +49,26 @@ public class WSASMRecordImporter extends Importer {
                     if (!writeMapToRow(map, sheetOut1) & !copyAllRowToTable(sheetIn, sheetOut2, addtion)) {
                         return IMOPRT_BadTable;
                     }
-                } else if (recordType.equals("室分及直放站返修")){
+                } else if (recordType.equals("室分及直放站返修")) {
                     Sheet sheetOut = workbookOut.getSheet("室分及直放站返修工单详情");
                     if (!writeMapToRow(map, sheetOut)) {
                         return IMOPRT_BadTable;
                     }
                 }
+
+                File outputDirectory = new File(excelfile.getParent() + "\\已导入\\");
+                if (!outputDirectory.exists()) {
+                    if (!outputDirectory.mkdirs()) {
+                        return IMORRT_IOFailure;
+                    }
+                    System.out.println("创建“已导入文件夹”");
+                }
+
+                if (file.renameTo(new File(outputDirectory.getPath() + "\\" + file.getName()))) {
+                    return IMORRT_IOFailure;
+                }
+
+
             }
 
             SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");//设置日期格式
