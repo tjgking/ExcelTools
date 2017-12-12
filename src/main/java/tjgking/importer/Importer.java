@@ -35,13 +35,13 @@ public class Importer {
     public int importExcelTable(ExcelFile excelfileDirectory) throws IOException, InvalidFormatException {
 
         if (excelfileDirectory.isDirectory()) {
-            Workbook workbookOut = excelfile.getWorkBook();
+            Workbook workbookOut = excelfile.getWorkBook(true);
 
             //读入表格数据
             ExcelFile[] files = excelfileDirectory.listFiles();
 
             for (ExcelFile file : files) {
-                Map<String, String> map = readExcelFileToMap(file, file.getWorkBook().getSheetName(0));
+                Map<String, String> map = readExcelFileToMap(file, file.getWorkBook(false).getSheetName(0));
                 Sheet sheetOut = workbookOut.getSheetAt(0);
 
                 if (!writeMapToRow(map, sheetOut)) {
@@ -121,8 +121,9 @@ public class Importer {
     static Map<String, String> readExcelFileToMap(ExcelFile excelFile, String sheetname) throws IOException, InvalidFormatException {
         Map<String, String> map = new HashMap<>();
         System.out.print("\n" + excelFile.getName());
-        Workbook workbookIn = excelFile.getWorkBook();
+        Workbook workbookIn = excelFile.getWorkBook(true);
         Sheet sheetIn = workbookIn.getSheet(sheetname);
+
         if (null != sheetIn) {
             int coloumNum = sheetIn.getRow(0).getPhysicalNumberOfCells();
             int rowNum = sheetIn.getLastRowNum();//获得总行数
@@ -165,7 +166,12 @@ public class Importer {
                         CellType cellType = sheetOut.getRow(rowNum - 1).getCell(i).getCellTypeEnum();
                         if (cellType.ordinal() == 1) {
                             if (HSSFDateUtil.isCellDateFormatted(sheetOut.getRow(rowNum - 1).getCell(i))) {
-                                cell.setCellValue(HSSFDateUtil.getJavaDate(Double.valueOf(cell.getStringCellValue())));
+                                try {
+                                    cell.setCellValue(HSSFDateUtil.getJavaDate(Double.valueOf(cell.getStringCellValue())));
+                                } catch (NumberFormatException e) {
+                                    e.printStackTrace();
+                                }
+
                             }
                         }
 

@@ -25,7 +25,7 @@ public class WSASMRecordImporter extends Importer {
     @Override
     public int importExcelTable(ExcelFile excelfileDirectory) throws IOException, InvalidFormatException {
         if (excelfileDirectory.isDirectory()) {
-            Workbook workbookOut = excelfile.getWorkBook();
+            Workbook workbookOut = excelfile.getWorkBook(true);
 
             //读入表格数据
             ExcelFile[] files = excelfileDirectory.listFiles();
@@ -42,7 +42,7 @@ public class WSASMRecordImporter extends Importer {
                 } else if (recordType.equals("硬件维修") || recordType.equals("硬件返修")) {
                     Sheet sheetOut1 = workbookOut.getSheet("硬件维修工单详情");
                     Sheet sheetOut2 = workbookOut.getSheet("硬件维修硬件详情");
-                    Sheet sheetIn = file.getWorkBook().getSheet("硬件维修明细表");
+                    Sheet sheetIn = file.getWorkBook(false).getSheet("硬件维修明细表");
 
                     Map<String, String> addtion = new HashMap<>();
                     addtion.put("工单号", map.get("工单号"));
@@ -64,11 +64,11 @@ public class WSASMRecordImporter extends Importer {
                     System.out.println("创建“已导入文件夹”");
                 }
 
-                if (file.renameTo(new File(outputDirectory.getPath() + "\\" + file.getName()))) {
+                if (!file.renameTo(new File(outputDirectory.getPath() + "\\" + file.getName()))) {
                     return IMORRT_IOFailure;
                 }
 
-
+                IMOPRT_SUCCESSED++;
             }
 
             SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");//设置日期格式
@@ -83,6 +83,8 @@ public class WSASMRecordImporter extends Importer {
 
             FileOutputStream out = new FileOutputStream(new File(path.substring(0, path.lastIndexOf(".")) + date + "" + No + path.substring(path.lastIndexOf("."))));
             workbookOut.write(out);
+
+            workbookOut.close();
             out.flush();
             out.close();
 

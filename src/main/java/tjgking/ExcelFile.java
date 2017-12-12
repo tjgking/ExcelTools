@@ -2,6 +2,9 @@ package tjgking;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -31,16 +34,34 @@ public class ExcelFile extends File {
         super(uri);
     }
 
-    public Workbook getWorkBook() throws IOException, InvalidFormatException {
-        Workbook workbook;
 
-        if (getName().endsWith("xls")) {
-            POIFSFileSystem fs = new POIFSFileSystem(this);
-            workbook = new HSSFWorkbook(fs);
-        } else if (getName().endsWith("xlsx")) {
-            workbook = new XSSFWorkbook(this);
-        } else {
+    public Workbook getWorkBook(boolean readonly) throws IOException, InvalidFormatException {
+        Workbook workbook;
+        try {
+            if (readonly) {
+                if (getName().endsWith("xls")) {
+                    POIFSFileSystem fs = new POIFSFileSystem(this, true);
+                    workbook = new HSSFWorkbook(fs);
+                } else if (getName().endsWith("xlsx")) {
+                    OPCPackage opcPackage = OPCPackage.open(this, PackageAccess.READ);
+                    workbook = new XSSFWorkbook(opcPackage);
+                } else {
+                    workbook = null;
+                }
+            } else {
+                if (getName().endsWith("xls")) {
+                    POIFSFileSystem fs = new POIFSFileSystem(this);
+                    workbook = new HSSFWorkbook(fs);
+                } else if (getName().endsWith("xlsx")) {
+                    OPCPackage opcPackage = OPCPackage.open(this);
+                    workbook = new XSSFWorkbook(opcPackage);
+                } else {
+                    workbook = null;
+                }
+            }
+        } catch (InvalidOperationException e) {
             workbook = null;
+            System.out.println("读入异常");
         }
 
         return workbook;

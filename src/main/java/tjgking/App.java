@@ -67,7 +67,7 @@ public class App {
     }
 
 
-    private static boolean importOperationHistory(String importType,String importExcelDirectoryPath,String outputExcelFilePath) {
+    private static boolean importOperationHistory(String importType, String importExcelDirectoryPath, String outputExcelFilePath) {
         Importer importer;
         System.out.println("请选择汇总表：");
         try {
@@ -94,7 +94,7 @@ public class App {
                 }
 
                 if (file1.exists()) {
-                    System.out.println("记录表文件夹：" + file.getPath());
+                    System.out.println("记录表文件夹：" + file1.getPath());
                 } else {
                     System.out.println("记录表文件夹不存在!");
                     return false;
@@ -111,14 +111,18 @@ public class App {
                     default:
                         importer = new Importer(file);
                 }
-                switch (importer.importExcelTable(file1)) {
-                    case Importer.IMOPRT_SUCCESSED:
-                        System.out.println("\n导入成功");
-                        break;
-                    case Importer.IMORRT_IOFailure:
-                        System.out.println("导入失败，IO错误，请检查文件目录和权限");
-                        break;
+
+                int result = importer.importExcelTable(file1);
+
+                System.out.println("*************************************************");
+                if (result > 0) {
+                    System.out.println("*    导入成功,共导入" + Utils.formatNum(result + "", " ") + "个文件              *");
+                } else if (result == Importer.IMORRT_IOFailure) {
+                    System.out.println("*    导入失败，IO错误，请检查文件目录和权限     *");
+                } else {
+                    System.out.println("*             发生未知错误                      *");
                 }
+                System.out.println("*************************************************");
                 return false;
             }
         } catch (Exception e) {
