@@ -191,7 +191,7 @@ public class Importer {
         //根据表头把每行数据转换为一个map
         if (sheetIN.getRow(0).getPhysicalNumberOfCells() > 0) {
             int columNum = sheetIN.getRow(0).getPhysicalNumberOfCells();
-            int rowNum = sheetIN.getLastRowNum();
+            int rowNum = sheetIN.getLastRowNum() + 1;
             for (int i = 1; i < rowNum; i++) {
                 int count = 0;
                 Map<String, String> map = new HashMap<>();
@@ -201,7 +201,9 @@ public class Importer {
                     map.put(key, value);
                     if (value.equals("")) count++;
                 }
-                if (count < 4) {
+
+                //检测空行的数量
+                if (count < columNum) {
                     if (addition == null || addition.isEmpty()) {
                         writeMapToRow(map, sheetOut);
                     } else {

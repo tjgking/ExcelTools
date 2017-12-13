@@ -24,6 +24,7 @@ public class WSASMRecordImporter extends Importer {
 
     @Override
     public int importExcelTable(ExcelFile excelfileDirectory) throws IOException, InvalidFormatException {
+
         if (excelfileDirectory.isDirectory()) {
             Workbook workbookOut = excelfile.getWorkBook(false);
 
@@ -42,12 +43,16 @@ public class WSASMRecordImporter extends Importer {
                 } else if (recordType.equals("硬件维修") || recordType.equals("硬件返修")) {
                     Sheet sheetOut1 = workbookOut.getSheet("硬件维修工单详情");
                     Sheet sheetOut2 = workbookOut.getSheet("硬件维修硬件详情");
-                    Sheet sheetIn = file.getWorkBook(false).getSheet("硬件维修明细表");
+                    Workbook workbookIn = file.getWorkBook(false);
+                    Sheet sheetIn = workbookIn.getSheet("硬件维修明细表");
 
                     Map<String, String> addtion = new HashMap<>();
                     addtion.put("工单号", map.get("工单号"));
+
+                    workbookIn.close();
+
                     if (!writeMapToRow(map, sheetOut1) & !copyAllRowToTable(sheetIn, sheetOut2, addtion)) {
-                        return IMOPRT_BadTable;
+                        return IMORRT_IOFailure;
                     }
                 } else if (recordType.equals("室分及直放站返修")) {
                     Sheet sheetOut = workbookOut.getSheet("室分及直放站返修工单详情");
