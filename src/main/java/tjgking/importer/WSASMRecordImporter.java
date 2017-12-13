@@ -25,7 +25,7 @@ public class WSASMRecordImporter extends Importer {
     @Override
     public int importExcelTable(ExcelFile excelfileDirectory) throws IOException, InvalidFormatException {
         if (excelfileDirectory.isDirectory()) {
-            Workbook workbookOut = excelfile.getWorkBook(true);
+            Workbook workbookOut = excelfile.getWorkBook(false);
 
             //读入表格数据
             ExcelFile[] files = excelfileDirectory.listFiles();
@@ -64,6 +64,7 @@ public class WSASMRecordImporter extends Importer {
                     System.out.println("创建“已导入文件夹”");
                 }
 
+                System.out.println(outputDirectory.getPath() + "\\" + file.getName());
                 if (!file.renameTo(new File(outputDirectory.getPath() + "\\" + file.getName()))) {
                     return IMORRT_IOFailure;
                 }

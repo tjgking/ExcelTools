@@ -127,8 +127,7 @@ public class Importer {
         if (null != sheetIn) {
             int coloumNum = sheetIn.getRow(0).getPhysicalNumberOfCells();
             int rowNum = sheetIn.getLastRowNum();//获得总行数
-
-            for (int i = 0; i < rowNum; i++) {
+            for (int i = 0; i < rowNum + 1; i++) {
                 for (int j = 0; j < coloumNum; j++) {
                     Cell cell = sheetIn.getRow(i).getCell(j);
                     Cell cell1 = sheetIn.getRow(i).getCell(j + 1);
@@ -140,6 +139,9 @@ public class Importer {
                         map.put(key, value);
                     }
                 }
+
+                //System.out.println("rowNum:" + i);
+                //System.out.println("rowNum Name:" + getStringCellValue(sheetIn.getRow(i).getCell(0)));
             }
         }
         workbookIn.close();
@@ -169,7 +171,7 @@ public class Importer {
                                 try {
                                     cell.setCellValue(HSSFDateUtil.getJavaDate(Double.valueOf(cell.getStringCellValue())));
                                 } catch (NumberFormatException e) {
-                                    e.printStackTrace();
+                                    System.out.print("-");
                                 }
 
                             }
