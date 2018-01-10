@@ -2,6 +2,7 @@ package tjgking;
 
 import com.sun.istack.internal.NotNull;
 import tjgking.importer.Importer;
+import tjgking.importer.MultiCollectImporter;
 import tjgking.importer.WSASMRecordImporter;
 
 import javax.swing.*;
@@ -52,6 +53,9 @@ public class App {
             switch (read.toLowerCase()) {
                 case "1":
                     sw = importOperationHistory("normal", importExcelDirectoryPath, outputExcelFilePath);
+                    break;
+                case "2":
+                    sw = importOperationHistory("Multi-collect", importExcelDirectoryPath, outputExcelFilePath);
                     break;
                 case "3":
                     sw = importOperationHistory("WSASMRecord", importExcelDirectoryPath, outputExcelFilePath);
@@ -107,6 +111,9 @@ public class App {
                         break;
                     case "WSASMRecord":
                         importer = new WSASMRecordImporter(file);
+                        break;
+                    case "Multi-collect":
+                        importer = new MultiCollectImporter(file);
                         break;
                     default:
                         importer = new Importer(file);

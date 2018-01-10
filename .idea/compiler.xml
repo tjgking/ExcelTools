@@ -25,7 +25,7 @@
         <module name="ExcelTools" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
+    <bytecodeTargetLevel target="1.8">
       <module name="ExcelTools" target="1.8" />
     </bytecodeTargetLevel>
   </component>

@@ -188,8 +188,9 @@ public class Importer {
     }
 
     static boolean copyAllRowToTable(Sheet sheetIN, Sheet sheetOut, @Nullable Map<String, String> addition) {
-        //根据表头把每行数据转换为一个map
         if (sheetIN.getRow(0).getPhysicalNumberOfCells() > 0) {
+
+            //根据表头把每行数据转换为一个map
             int columNum = sheetIN.getRow(0).getPhysicalNumberOfCells();
             int rowNum = sheetIN.getLastRowNum() + 1;
             for (int i = 1; i < rowNum; i++) {
